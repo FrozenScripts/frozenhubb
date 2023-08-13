@@ -1,0 +1,30 @@
+local IMAGE = "rbxassetid://14414936140"
+local Positions = UDim2.new(0.001025776, 0, 0.5401606411, 0)
+local Sizes = UDim2.new(0, 76, 0, 70)
+
+local FROZENHUBIOS = Instance.new("ScreenGui")
+local _100x100 = Instance.new("Frame")
+local ImageButton = Instance.new("ImageButton")
+
+FROZENHUBIOS.Name = "FrozenHubOpen"
+FROZENHUBIOS.Parent = game:WaitForChild("CoreGui")
+FROZENHUBIOS.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+_100x100.Name = "100x100"
+_100x100.Parent = FROZENHUBIOS
+_100x100.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+_100x100.Position = Positions
+_100x100.Size = UDim2.new(0, 50, 0, 45)
+
+ImageButton.Parent = _100x100
+ImageButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ImageButton.Size = Sizes
+ImageButton.Image = IMAGE
+ImageButton.MouseButton1Down:connect(function()
+    if game.CoreGui.Discord.Enabled == false then
+game.CoreGui.Discord.Enabled = true
+    elseif game.CoreGui.Discord.Enabled == true then
+game.CoreGui.Discord.Enabled = false
+    end
+end)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/FrozenScripts/frozenhubb/main/frozenhub1", true))()
