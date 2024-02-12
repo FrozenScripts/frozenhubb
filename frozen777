@@ -1,30 +1,79 @@
-local IMAGE = "rbxassetid://14414936140"
-local Positions = UDim2.new(0.001025776, 0, 0.5401606411, 0)
-local Sizes = UDim2.new(0, 76, 0, 70)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/FrozenScripts/frozenhubb/main/frozenhub1", true))()
 
-local FROZENHUBIOS = Instance.new("ScreenGui")
-local _100x100 = Instance.new("Frame")
+task.wait()
+
+-- Services
+local CoreGui = game:WaitForChild("CoreGui")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+-- Variables
+local discordGui = CoreGui:FindFirstChild("Discord")
+
+-- Create a GUI element in the CoreGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "FrozenHub Toggle Button"
+ScreenGui.Parent = CoreGui
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- Create an ImageButton within the ScreenGui for toggling
 local ImageButton = Instance.new("ImageButton")
+ImageButton.Parent = ScreenGui
+ImageButton.Size = UDim2.new(0, 75, 0, 75)
+ImageButton.Position = UDim2.new(0.5, -75 / 2, 0, 0)
+ImageButton.Image = "rbxassetid://14414936140"
+ImageButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 
-FROZENHUBIOS.Name = "FrozenHubOpen"
-FROZENHUBIOS.Parent = game:WaitForChild("CoreGui")
-FROZENHUBIOS.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ImageButton.Visible = true
+ImageButton.Active = true
 
-_100x100.Name = "100x100"
-_100x100.Parent = FROZENHUBIOS
-_100x100.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-_100x100.Position = Positions
-_100x100.Size = UDim2.new(0, 50, 0, 45)
+-- Create an UICorner for ImageButton
+local ImageButtonUICorner = Instance.new("UICorner")
+ImageButtonUICorner.Parent = ImageButton
+ImageButtonUICorner.CornerRadius = UDim.new(0, 12)
 
-ImageButton.Parent = _100x100
-ImageButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-ImageButton.Size = Sizes
-ImageButton.Image = IMAGE
-ImageButton.MouseButton1Down:connect(function()
-    if game.CoreGui.Discord.Enabled == false then
-game.CoreGui.Discord.Enabled = true
-    elseif game.CoreGui.Discord.Enabled == true then
-game.CoreGui.Discord.Enabled = false
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    local tween = TweenService:Create(ImageButton, TweenInfo.new(0.15), {Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)})
+    tween:Play()
+end
+
+ImageButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = ImageButton.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
     end
 end)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/FrozenScripts/frozenhubb/main/frozenhub1", true))()
+
+ImageButton.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+
+local function Toggle()  
+    if discordGui then
+        discordGui.Enabled = not discordGui.Enabled
+    end
+end
+
+ImageButton.MouseButton1Down:Connect(Toggle)
